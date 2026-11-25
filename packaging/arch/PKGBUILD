@@ -1,0 +1,52 @@
+# Maintainer: Arvex-GH <arvex@users.noreply.github.com>
+# Arch Linux / Omarchy package built from the official release tarball.
+#   makepkg -si
+pkgname=anything-editor-bin
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Learn any programming language with an AI tutor, an embedded LazyVim editor and a knowledge graph"
+arch=('x86_64')
+url="https://github.com/Arvex-GH/AnythingEditor"
+license=('MIT')
+depends=('gtk3' 'nss' 'alsa-lib' 'libxss' 'libxtst' 'libnotify' 'xdg-utils' 'at-spi2-core')
+optdepends=('neovim: LazyVim editor (0.11+)'
+            'git: install LazyVim plugins'
+            'ripgrep: live grep in LazyVim'
+            'fd: fast file finder'
+            'lazygit: git UI inside LazyVim'
+            'base-devel: treesitter parsers and C/C++ exercises'
+            'libsecret: encrypted API key storage')
+provides=('anything-editor')
+conflicts=('anything-editor')
+options=('!strip' '!debug')
+source=("AnythingEditor-${pkgver}-x64.tar.gz::${url}/releases/download/v${pkgver}/AnythingEditor-${pkgver}-x64.tar.gz"
+        "LICENSE-${pkgver}::https://raw.githubusercontent.com/Arvex-GH/AnythingEditor/v${pkgver}/LICENSE")
+sha256sums=('SKIP'
+            'SKIP')
+
+package() {
+  local appdir
+  appdir="$(dirname "$(find "$srcdir" -mindepth 2 -maxdepth 2 -type f -name anything-editor | head -n1)")"
+
+  install -d "$pkgdir/opt/AnythingEditor"
+  cp -a "$appdir/." "$pkgdir/opt/AnythingEditor/"
+  chmod 4755 "$pkgdir/opt/AnythingEditor/chrome-sandbox"
+
+  install -d "$pkgdir/usr/bin"
+  ln -s /opt/AnythingEditor/anything-editor "$pkgdir/usr/bin/anything-editor"
+
+  install -Dm644 "$appdir/resources/icon.png" "$pkgdir/usr/share/icons/hicolor/512x512/apps/anything-editor.png"
+  install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/anything-editor.desktop" <<DESKTOP
+[Desktop Entry]
+Name=AnythingEditor
+Comment=Learn any programming language with an AI tutor
+Exec=/opt/AnythingEditor/anything-editor %U
+Icon=anything-editor
+Terminal=false
+Type=Application
+Categories=Development;Education;
+Keywords=code;learn;tutor;vim;neovim;programming;
+StartupWMClass=AnythingEditor
+DESKTOP
+  install -Dm644 "$srcdir/LICENSE-${pkgver}" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

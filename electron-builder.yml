@@ -41,6 +41,8 @@ linux:
       arch: [x64]
     - target: tar.gz
       arch: [x64]
+    - target: pacman
+      arch: [x64]
   category: Development
   icon: build/icon.png
   executableName: anything-editor
@@ -56,6 +58,27 @@ linux:
       StartupWMClass: AnythingEditor
 deb:
   recommends: [git, ripgrep, fd-find, build-essential, libsecret-1-0]
+pacman:
+  # Arch Linux / Omarchy / Manjaro / EndeavourOS
+  artifactName: anything-editor-${version}-1-x86_64.pkg.tar.xz
+  depends: [gtk3, nss, alsa-lib, libxss, libxtst, libnotify, xdg-utils, at-spi2-core]
+  fpm:
+    - --pacman-compression
+    - xz
+    - --pacman-optional-depends
+    - "neovim: LazyVim editor (0.11+)"
+    - --pacman-optional-depends
+    - "git: install LazyVim plugins"
+    - --pacman-optional-depends
+    - "ripgrep: live grep in LazyVim"
+    - --pacman-optional-depends
+    - "fd: fast file finder"
+    - --pacman-optional-depends
+    - "lazygit: git UI inside LazyVim"
+    - --pacman-optional-depends
+    - "base-devel: treesitter parsers and C/C++ exercises"
+    - --pacman-optional-depends
+    - "libsecret: encrypted API key storage"
 publish:
   provider: github
   owner: Arvex-GH

@@ -22,7 +22,15 @@ Download the latest build from **[Releases](https://github.com/Arvex-GH/Anything
 
 - **Windows:** run `AnythingEditor-Setup-<version>.exe`. The app then appears in the Start menu and in search. A portable `.exe` is also available.
 - **Debian / Ubuntu:** `sudo apt install ./AnythingEditor-<version>-amd64.deb`. The app then appears in your application menu.
+- **Arch Linux / Omarchy / Manjaro / EndeavourOS:** run `sudo pacman -U ./anything-editor-<version>-1-x86_64.pkg.tar.xz`. You can also build from the `PKGBUILD` attached to the release: download it into an empty folder and run `makepkg -si`. See [Omarchy notes](#omarchy) below.
 - **Any Linux:** `chmod +x AnythingEditor-<version>-x86_64.AppImage && ./AnythingEditor-<version>-x86_64.AppImage`. This needs FUSE 2 (`sudo apt install libfuse2`, or `libfuse2t64` on Ubuntu 24.04).
+
+### Omarchy
+
+Omarchy already ships Neovim, LazyVim, ripgrep, fd, lazygit and git, so the embedded editor works immediately. Launch AnythingEditor from the app launcher (`Super + Space`, type "AnythingEditor").
+- The app runs natively on Wayland/Hyprland. Its window class is `AnythingEditor`, which you can use in Hyprland window rules.
+- The bundled LazyVim config is isolated, so it never touches your Omarchy `~/.config/nvim`. If you'd rather use your own Omarchy LazyVim setup, go to **Settings → Editor → Neovim config → My own Neovim config**. The tutor keymaps are injected either way.
+- For treesitter parsers and C/C++ exercises: `sudo pacman -S --needed base-devel`.
 
 ## Requirements
 
