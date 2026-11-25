@@ -1,0 +1,39 @@
+appId: com.arvex.anythingeditor
+productName: AnythingEditor
+directories:
+  buildResources: build
+  output: release/${version}
+files:
+  - out/**
+  - package.json
+  - "!**/*.map"
+extraResources:
+  - from: resources
+    to: resources
+    filter: ["**/*"]
+  - from: build/icon.png
+    to: icon.png
+asarUnpack:
+  - "**/node_modules/@lydell/**"
+npmRebuild: false
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  icon: build/icon.png
+  artifactName: AnythingEditor-${version}-${arch}-${target}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+portable:
+  artifactName: AnythingEditor-${version}-portable.${ext}
+linux:
+  target: [AppImage, deb]
+  category: Development
+  icon: build/icon.png
+  artifactName: AnythingEditor-${version}-${arch}.${ext}
+  maintainer: Arvex-GH
