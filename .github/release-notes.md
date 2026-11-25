@@ -7,6 +7,7 @@ AnythingEditor teaches you any programming language with an AI tutor. The tutor 
 | --- | --- |
 | **Linux** (any distro) | `AnythingEditor-<version>-x86_64.AppImage`: run `chmod +x` on it, then run it |
 | **Debian / Ubuntu / Mint / Pop!_OS** | `AnythingEditor-<version>-amd64.deb`: `sudo apt install ./AnythingEditor-*.deb` |
+| **Arch Linux / Omarchy / Manjaro** | `anything-editor-<version>-1-x86_64.pkg.tar.xz`: `sudo pacman -U ./anything-editor-*.pkg.tar.xz`, or download `PKGBUILD` and run `makepkg -si` |
 | Linux (manual) | `AnythingEditor-<version>-x64.tar.gz` |
 | **Windows 10/11** | `AnythingEditor-Setup-<version>.exe` (installer) or `AnythingEditor-<version>-portable.exe` |
 
@@ -14,6 +15,11 @@ AnythingEditor teaches you any programming language with an AI tutor. The tutor 
 - The AppImage needs FUSE 2. On Ubuntu 22.04 and later, install it with `sudo apt install libfuse2` (on 24.04 the package is `libfuse2t64`).
 - Neovim **0.11 or newer** is needed for LazyVim. Distro packages are often older, so get it from the [Neovim releases](https://github.com/neovim/neovim/releases) page or with `brew install neovim`. If no suitable Neovim is found, the app uses its built-in Vim-mode editor.
 - **Settings → Doctor** shows any missing tools (git, a C compiler, ripgrep, fd, lazygit and language toolchains) along with the command to install each one.
+
+### Omarchy notes
+- Omarchy already includes Neovim + LazyVim, ripgrep, fd, lazygit and git, so the embedded editor works immediately. Open the app from the launcher (`Super + Space`).
+- The app runs natively on Wayland/Hyprland with window class `AnythingEditor`.
+- The bundled LazyVim config is isolated from your `~/.config/nvim`. To use your own Omarchy config instead, choose **Settings → Editor → My own Neovim config**.
 
 ### First run
 1. Go to **Settings → Models** and add any OpenAI-compatible endpoint: OpenAI, OpenRouter, Anthropic, Gemini, Ollama, LM Studio or your own.
