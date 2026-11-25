@@ -16,7 +16,9 @@
     "test": "node --import ./tests/setup.mjs --test tests/*.test.ts",
     "dist:win": "npm run build && electron-builder --win --x64",
     "dist:linux": "npm run build && electron-builder --linux --x64",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "node scripts/ensure-electron.mjs && electron-builder install-app-deps",
+    "predev": "node scripts/ensure-electron.mjs",
+    "prestart": "node scripts/ensure-electron.mjs"
   },
   "dependencies": {
     "@lydell/node-pty": "1.1.0",
@@ -53,5 +55,10 @@
     "tsx": "^4.23.15",
     "typescript": "~5.9.3",
     "vite": "^8.3.8"
+  },
+  "allowScripts": {
+    "electron": true,
+    "esbuild": true,
+    "electron-winstaller": true
   }
 }
