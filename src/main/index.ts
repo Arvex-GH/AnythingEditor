@@ -18,6 +18,10 @@ import { detectLanguage, findLanguage } from '@shared/languages'
 
 let win: BrowserWindow | null = null
 
+// AppImages cannot ship a SUID chrome-sandbox and Ubuntu 23.10+ blocks the
+// user-namespace sandbox via AppArmor, so Chromium would refuse to start.
+if (process.platform === 'linux' && process.env.APPIMAGE) app.commandLine.appendSwitch('no-sandbox')
+
 if (!app.requestSingleInstanceLock()) {
   app.quit()
 }

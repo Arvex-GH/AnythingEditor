@@ -1,0 +1,94 @@
+name: Build & release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to create/update (e.g. v0.1.0). Leave empty to only build.'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  linux:
+    needs: check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: sudo apt-get update && sudo apt-get install -y xvfb libfuse2
+      - run: npm ci
+      - run: npm run build
+      - run: npx electron-builder --linux --x64 --publish never
+      - name: Smoke test (packaged app under Xvfb)
+        run: SHOT_OUT=smoke-linux.jpg xvfb-run -a -s "-screen 0 1500x920x24" scripts/smoke-test.sh release/*/linux-unpacked/anything-editor
+      - name: Smoke test (AppImage)
+        run: |
+          chmod +x release/*/AnythingEditor-*-x86_64.AppImage
+          SHOT_OUT=smoke-appimage.jpg xvfb-run -a -s "-screen 0 1500x920x24" scripts/smoke-test.sh release/*/AnythingEditor-*-x86_64.AppImage
+      - name: Install .deb and smoke test it
+        run: |
+          sudo apt-get install -y ./release/*/AnythingEditor-*-amd64.deb
+          test -f /usr/share/applications/anything-editor.desktop && cat /usr/share/applications/anything-editor.desktop
+          SHOT_OUT=smoke-deb.jpg xvfb-run -a -s "-screen 0 1500x920x24" scripts/smoke-test.sh /opt/AnythingEditor/anything-editor
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            release/*/*.AppImage
+            release/*/*.deb
+            release/*/*.tar.gz
+            release/*/latest-linux.yml
+            smoke-*.jpg
+
+  windows:
+    needs: check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run build
+      - run: npx electron-builder --win --x64 --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: |
+            release/*/*.exe
+            release/*/*.blockmap
+            release/*/latest.yml
+
+  release:
+    needs: [linux, windows]
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: dist-artifacts }
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || inputs.tag }}
+        run: |
+          files=$(find dist-artifacts -type f \( -name '*.AppImage' -o -name '*.deb' -o -name '*.tar.gz' -o -name '*.exe' -o -name '*.yml' -o -name '*.blockmap' \) | grep -v __uninstaller)
+          echo "$files"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --title "AnythingEditor ${TAG#v}" --notes-file .github/release-notes.md --target "$GITHUB_SHA"
+          fi
+          gh release upload "$TAG" $files --clobber

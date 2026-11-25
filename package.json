@@ -4,7 +4,10 @@
   "version": "0.1.0",
   "description": "Learn any programming language with an AI tutor, a LazyVim-powered editor and a persistent knowledge graph.",
   "license": "MIT",
-  "author": "Arvex-GH",
+  "author": {
+    "name": "Arvex-GH",
+    "email": "arvex@users.noreply.github.com"
+  },
   "homepage": "https://github.com/Arvex-GH/AnythingEditor",
   "main": "out/main/index.js",
   "type": "commonjs",
@@ -60,5 +63,9 @@
     "electron": true,
     "esbuild": true,
     "electron-winstaller": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Arvex-GH/AnythingEditor.git"
   }
 }

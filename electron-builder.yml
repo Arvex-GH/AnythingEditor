@@ -34,8 +34,29 @@ nsis:
 portable:
   artifactName: AnythingEditor-${version}-portable.${ext}
 linux:
-  target: [AppImage, deb]
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+    - target: tar.gz
+      arch: [x64]
   category: Development
   icon: build/icon.png
+  executableName: anything-editor
+  synopsis: Learn any programming language with an AI tutor and a LazyVim editor
+  maintainer: Arvex-GH <arvex@users.noreply.github.com>
+  vendor: Arvex-GH
   artifactName: AnythingEditor-${version}-${arch}.${ext}
-  maintainer: Arvex-GH
+  desktop:
+    entry:
+      Name: AnythingEditor
+      Comment: Learn any programming language with an AI tutor
+      Keywords: code;learn;tutor;vim;neovim;programming;
+      StartupWMClass: AnythingEditor
+deb:
+  recommends: [git, ripgrep, fd-find, build-essential, libsecret-1-0]
+publish:
+  provider: github
+  owner: Arvex-GH
+  repo: AnythingEditor

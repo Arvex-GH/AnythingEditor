@@ -16,5 +16,9 @@ try {
 if (!existsSync(join(dir, 'path.txt')) || !existsSync(join(dir, 'dist'))) {
   console.log('[AnythingEditor] Downloading the Electron runtime…')
   const r = spawnSync(process.execPath, [join(dir, 'install.js')], { stdio: 'inherit' })
-  process.exit(r.status ?? 1)
+  if (r.status !== 0) {
+    // Never fail `npm install` over this; `npm run dev` will report it clearly.
+    console.warn('[AnythingEditor] Could not download Electron. Retry with: node node_modules/electron/install.js')
+    process.exit(process.env.npm_lifecycle_event === 'postinstall' ? 0 : 1)
+  }
 }
